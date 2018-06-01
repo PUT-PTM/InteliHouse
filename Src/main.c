@@ -43,6 +43,7 @@
 #include "epd1in54.h"
 #include "epdif.h"
 #include "epdpaint.h"
+#include "startimage.h"
 #include "imagedata.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_uart.h"
@@ -83,11 +84,12 @@ static void MX_USART2_UART_Init(void);
   *
   * @retval None
   */
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	 unsigned char frame_buffer[EPD_WIDTH * EPD_HEIGHT / 8];
 
-	  unsigned char frame_buffer[EPD_WIDTH * EPD_HEIGHT / 8];
 	  char time_string[] = {'0', '0', ':', '0', '0', '\0'};
 	  unsigned long time_start_ms;
 	  unsigned long time_now_s;
@@ -127,11 +129,52 @@ int main(void)
 
   /* For simplicity, the arguments are explicit numerical coordinates */
   /* Write strings to the buffer */
+//  Paint_DrawFilledRectangle(&paint, 0, 6, 200, 26, COLORED);
+//  Paint_DrawStringAt(&paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
+  //Paint_DrawStringAt(&paint, 30, 30, "1.Dioda ON/OFF ", &Font16, COLORED);
+  //Paint_DrawStringAt(&paint, 30, 30, "2.Muzyka ON/OFF ", &Font16, COLORED);
+ // Paint_DrawStringAt(&paint, 30, 30, "1.Zapal diode ", &Font16, COLORED);
+
+
+
+//  /* Draw something to the frame buffer */
+//  Paint_DrawRectangle(&paint, 10, 60, 50, 110, COLORED);
+//  Paint_DrawLine(&paint, 10, 60, 50, 110, COLORED);
+//  Paint_DrawLine(&paint, 50, 60, 10, 110, COLORED);
+//  Paint_DrawCircle(&paint, 120, 80, 30, COLORED);
+//  Paint_DrawFilledRectangle(&paint, 10, 130, 50, 180, COLORED);
+//  Paint_DrawFilledCircle(&paint, 120, 150, 30, COLORED);
+//
+//  /* Display the frame_buffer */
+//  EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
+//  EPD_DisplayFrame(&epd);
+// // EPD_DelayMs(&epd, 20000);
+//  EPD_DelayMs(&epd, 200);
+
+  EPD_Init(&epd, lut_partial_update);
+  /**
+    *  there are 2 memory areas embedded in the e-paper display
+    *  and once the display is refreshed, the memory area will be auto-toggled,
+    *  i.e. the next action of SetFrameMemory will set the other memory area
+    *  therefore you have to set the frame memory and refresh the display twice.
+    */
+//  EPD_SetFrameMemory(&epd, IMAGE_DATA, 0, 0, epd.width, epd.height);
+  //wyswietlanie ekranu startowego
+  EPD_SetFrameMemory(&epd, START_IMAGE, 0, 0, epd.width, epd.height);
+
+  EPD_DisplayFrame(&epd);
+  EPD_SetFrameMemory(&epd, START_IMAGE, 0, 0, epd.width, epd.height);
+  EPD_DisplayFrame(&epd);
+  EPD_DelayMs(&epd, 2000);
+  time_start_ms = HAL_GetTick();
+
+  /* For simplicity, the arguments are explicit numerical coordinates */
+  /* Write strings to the buffer */
   Paint_DrawFilledRectangle(&paint, 0, 6, 200, 26, COLORED);
   Paint_DrawStringAt(&paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
   Paint_DrawStringAt(&paint, 30, 30, "1.Dioda ON/OFF ", &Font16, COLORED);
-  //Paint_DrawStringAt(&paint, 30, 30, "2.Muzyka ON/OFF ", &Font16, COLORED);
- // Paint_DrawStringAt(&paint, 30, 30, "1.Zapal diode ", &Font16, COLORED);
+//  Paint_DrawStringAt(&paint, 30, 30, "2.Muzyka ON/OFF ", &Font16, COLORED);
+//  Paint_DrawStringAt(&paint, 30, 30, "1.Zapal diode ", &Font16, COLORED);
 
 
 
@@ -143,24 +186,12 @@ int main(void)
   Paint_DrawFilledRectangle(&paint, 10, 130, 50, 180, COLORED);
   Paint_DrawFilledCircle(&paint, 120, 150, 30, COLORED);
 
+  //wyswietlanie ekranu glownego
   /* Display the frame_buffer */
   EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
   EPD_DisplayFrame(&epd);
-  EPD_DelayMs(&epd, 20000);
-
-  EPD_Init(&epd, lut_partial_update);
-  /**
-    *  there are 2 memory areas embedded in the e-paper display
-    *  and once the display is refreshed, the memory area will be auto-toggled,
-    *  i.e. the next action of SetFrameMemory will set the other memory area
-    *  therefore you have to set the frame memory and refresh the display twice.
-    */
-  EPD_SetFrameMemory(&epd, IMAGE_DATA, 0, 0, epd.width, epd.height);
-  EPD_DisplayFrame(&epd);
-  EPD_SetFrameMemory(&epd, IMAGE_DATA, 0, 0, epd.width, epd.height);
-  EPD_DisplayFrame(&epd);
-
-  time_start_ms = HAL_GetTick();
+ // EPD_DelayMs(&epd, 20000);
+  //EPD_DelayMs(&epd, 200);
 
 
 
@@ -180,22 +211,25 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	  time_now_s = (HAL_GetTick() - time_start_ms) / 1000;
-	     time_string[0] = time_now_s / 60 / 10 + '0';
-	     time_string[1] = time_now_s / 60 % 10 + '0';
-	     time_string[3] = time_now_s % 60 / 10 + '0';
-	     time_string[4] = time_now_s % 60 % 10 + '0';
-
-	     Paint_SetWidth(&paint, 32);
-	     Paint_SetHeight(&paint, 96);
-	     Paint_SetRotate(&paint, ROTATE_270);
-
-	     Paint_Clear(&paint, UNCOLORED);
-	     Paint_DrawStringAt(&paint, 0, 4, time_string, &Font24, COLORED);
-	     EPD_SetFrameMemory(&epd, frame_buffer, 80, 72, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
-	     EPD_DisplayFrame(&epd);
-
-	     EPD_DelayMs(&epd, 500);
+//	  time_now_s = (HAL_GetTick() - time_start_ms) / 1000;
+//	     time_string[0] = time_now_s / 60 / 10 + '0';
+//	     time_string[1] = time_now_s / 60 % 10 + '0';
+//	     time_string[3] = time_now_s % 60 / 10 + '0';
+//	     time_string[4] = time_now_s % 60 % 10 + '0';
+//
+//	     Paint_SetWidth(&paint, 32);
+//	     Paint_SetHeight(&paint, 96);
+//	     Paint_SetRotate(&paint, ROTATE_270);
+//
+//	     Paint_Clear(&paint, UNCOLORED);
+//	     Paint_DrawStringAt(&paint, 0, 4, time_string, &Font24, COLORED);
+//	   //  EPD_SetFrameMemory(&epd, frame_buffer, 80, 72, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
+//		 //   EPD_SetFrameMemory(&epd, frame_buffer, 10, 20, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
+//
+//
+//	     EPD_DisplayFrame(&epd);
+//
+//	     EPD_DelayMs(&epd, 500);
   }
   /* USER CODE END 3 */
 
