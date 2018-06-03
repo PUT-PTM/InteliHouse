@@ -68,7 +68,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
-
+void DisplayString(Paint* paint,const char* text,EPD* epd, const unsigned char* image_buffer);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -84,7 +84,6 @@ static void MX_USART2_UART_Init(void);
   *
   * @retval None
   */
-
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -190,9 +189,11 @@ int main(void)
   /* Display the frame_buffer */
   EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
   EPD_DisplayFrame(&epd);
- // EPD_DelayMs(&epd, 20000);
+//  HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
+  // EPD_DelayMs(&epd, 20000);
   //EPD_DelayMs(&epd, 200);
-
+//1. Wl/wyl urzadzenie 1
+  //2. wl/wyl urzadzenie 2
 
 
 /*//Funkcje do komunikacji przez UART z ESP88266
@@ -205,10 +206,63 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int dev1, dev2, dev3, dev4=0;
   while (1)
   {
-
+//PB4 PB5 PB7 PB8 input
   /* USER CODE END WHILE */
+//
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)&&(dev1==0)){
+		 //wlaczanie urzadzenia 1
+		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
+		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_SET);
+		 DisplayString(&paint,"Device 1 ON",&epd,frame_buffer);
+		 dev1=1;
+	 }
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)&&(dev1==1)){
+		 //wylaczanie urzadzenia 1
+	 		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_RESET);
+	 		 DisplayString(&paint,"Device 1 OFF",&epd,frame_buffer);
+	 		 dev1=0;
+	 	 }
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)&&(dev2==0)){
+		 //wlaczanie urzadzenia 2
+	 	 		 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_SET);
+	 	 		 DisplayString(&paint,"Device 2 ON",&epd,frame_buffer);
+	 	 		 dev2=1;
+	 	 	 }
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)&&(dev2==1)){
+		 //wylaczanie urzadzenia 2
+	 	 		 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_RESET);
+	 	 		 DisplayString(&paint,"Device 2 OFF",&epd,frame_buffer);
+	 	 		 dev2=0;
+	 	 	 }
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)&&(dev3==0)){
+		 //wlaczanie urzadzenia 3
+	 	 	 		 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_SET);
+	 	 	 		 DisplayString(&paint,"Device 3 ON",&epd,frame_buffer);
+	 	 	 		 dev3=1;
+	 	 	 	 }
+	 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)&&(dev3==1)){
+	 		 //wylaczanie urzadzenia 3
+	 	 	 		 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_RESET);
+	 	 	 		 DisplayString(&paint,"Device 3 OFF",&epd,frame_buffer);
+	 	 	 		 dev3=0;
+	 	 	 	 }
+	 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==0)){
+	 		 //wlaczanie urzadzenia 4
+	 		 	 		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
+	 		 	 		 HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_SET);
+	 		 	 		 DisplayString(&paint,"Device 4 ON",&epd,frame_buffer);
+	 		 	 		 dev4=1;
+	 		 	 	 }
+	 		 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==1)){
+	 			 //wylaczanie urzadzenia 4
+	 		 	 		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
+	 		 	 		 HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_RESET);
+	 		 	 		 DisplayString(&paint,"Device 4 OFF",&epd,frame_buffer);
+	 		 	 		 dev4=0;
+	 		 	 	 }
 
   /* USER CODE BEGIN 3 */
 //	  time_now_s = (HAL_GetTick() - time_start_ms) / 1000;
@@ -230,15 +284,35 @@ int main(void)
 //	     EPD_DisplayFrame(&epd);
 //
 //	     EPD_DelayMs(&epd, 500);
-  }
+ // }
   /* USER CODE END 3 */
 
 }
-
+}
 /**
   * @brief System Clock Configuration
   * @retval None
   */
+void DisplayString(Paint* paint,const char* text,EPD* epd, const unsigned char* image_buffer){
+	Paint_Clear(paint, UNCOLORED);
+			 Paint_DrawFilledRectangle(paint, 0, 6, 200, 26, COLORED);
+			  Paint_DrawStringAt(paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
+			 Paint_DrawStringAt(paint, 30, 30, text, &Font16, COLORED);
+			 /* Draw something to the frame buffer */
+			  Paint_DrawRectangle(paint, 10, 60, 50, 110, COLORED);
+			  Paint_DrawLine(paint, 10, 60, 50, 110, COLORED);
+			  Paint_DrawLine(paint, 50, 60, 10, 110, COLORED);
+			  Paint_DrawCircle(paint, 120, 80, 30, COLORED);
+			  Paint_DrawFilledRectangle(paint, 10, 130, 50, 180, COLORED);
+			  Paint_DrawFilledCircle(paint, 120, 150, 30, COLORED);
+
+			  //wyswietlanie ekranu glownego
+			  /* Display the frame_buffer */
+			  EPD_SetFrameMemory(epd, image_buffer, 0, 0, Paint_GetWidth(paint), Paint_GetHeight(paint));
+			  EPD_DisplayFrame(epd);
+
+
+}
 void SystemClock_Config(void)
 {
 
@@ -335,7 +409,28 @@ static void MX_USART2_UART_Init(void)
 
 }
 
-
+/** Configure pins as 
+        * Analog 
+        * Input 
+        * Output
+        * EVENT_OUT
+        * EXTI
+     PC3   ------> I2S2_SD
+     PA4   ------> I2S3_WS
+     PA5   ------> SPI1_SCK
+     PA6   ------> SPI1_MISO
+     PA7   ------> SPI1_MOSI
+     PB10   ------> I2S2_CK
+     PC7   ------> I2S3_MCK
+     PA9   ------> USB_OTG_FS_VBUS
+     PA10   ------> USB_OTG_FS_ID
+     PA11   ------> USB_OTG_FS_DM
+     PA12   ------> USB_OTG_FS_DP
+     PC10   ------> I2S3_CK
+     PC12   ------> I2S3_SD
+     PB6   ------> I2C1_SCL
+     PB9   ------> I2C1_SDA
+*/
 static void MX_GPIO_Init(void)
 {
 
@@ -403,11 +498,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BOOT1_Pin */
-  GPIO_InitStruct.Pin = BOOT1_Pin;
+  /*Configure GPIO pins : BOOT1_Pin PB4 PB5 PB7 
+                           PB8 */
+  GPIO_InitStruct.Pin = BOOT1_Pin|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_7 
+                          |GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : BUSY_Pin */
   GPIO_InitStruct.Pin = BUSY_Pin;
