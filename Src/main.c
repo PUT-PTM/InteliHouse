@@ -156,6 +156,12 @@ int main(void)
   Paint_DrawCircle(&paint, 50, 150, 30, COLORED);
   Paint_DrawCircle(&paint, 150, 150, 30, COLORED);
 
+  Paint_DrawStringAt(&paint, 43, 70, "1", &Font24, COLORED);
+  Paint_DrawStringAt(&paint, 143, 70, "2", &Font24, COLORED);
+  Paint_DrawStringAt(&paint, 43, 140, "3", &Font24, COLORED);
+  Paint_DrawStringAt(&paint, 143, 140, "4", &Font24, COLORED);
+
+
   //wyswietlanie ekranu glownego
   /* Display the frame_buffer */
   EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
@@ -186,6 +192,7 @@ int main(void)
 		HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_SET);
 		dev1=1;
 		DisplayString(&paint,"Device 1 ON",&epd,frame_buffer);
+
 	 	 }
 
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)&&(dev1==1)){
@@ -193,6 +200,8 @@ int main(void)
 		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_RESET);
 		 dev1=0;
 		 DisplayString(&paint,"Device 1 OFF",&epd,frame_buffer);
+
+
 	 	 }
 
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)&&(dev2==0)){
@@ -274,6 +283,10 @@ void DisplayString(Paint* paint,const char* text,EPD* epd, const unsigned char* 
 	Paint_DrawStringAt(paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
 	Paint_DrawStringAt(paint, 30, 30, text, &Font16, COLORED);
 
+	Paint_DrawStringAt(paint, 43, 70, "1", &Font24, COLORED);
+	Paint_DrawStringAt(paint, 143, 70, "2", &Font24, COLORED);
+	Paint_DrawStringAt(paint, 43, 140, "3", &Font24, COLORED);
+	Paint_DrawStringAt(paint, 143, 140, "4", &Font24, COLORED);
 
 	if(dev1==0)  Paint_DrawCircle(paint, 50, 80, 30, COLORED);
 	else Paint_DrawFilledCircle(paint, 50, 80, 30, COLORED);
