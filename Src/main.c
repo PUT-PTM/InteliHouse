@@ -69,7 +69,7 @@ static void MX_GPIO_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_USART2_UART_Init(void);
 int dev1, dev2, dev3, dev4=0;
-void DisplayString(Paint* paint,int nr,const char* text,EPD* epd, const unsigned char* image_buffer);
+void DisplayString(Paint* paint,const char* text,EPD* epd, const unsigned char* image_buffer);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -127,29 +127,6 @@ int main(void)
   Paint_Init(&paint, frame_buffer, epd.width, epd.height);
   Paint_Clear(&paint, UNCOLORED);
 
-  /* For simplicity, the arguments are explicit numerical coordinates */
-  /* Write strings to the buffer */
-//  Paint_DrawFilledRectangle(&paint, 0, 6, 200, 26, COLORED);
-//  Paint_DrawStringAt(&paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
-  //Paint_DrawStringAt(&paint, 30, 30, "1.Dioda ON/OFF ", &Font16, COLORED);
-  //Paint_DrawStringAt(&paint, 30, 30, "2.Muzyka ON/OFF ", &Font16, COLORED);
- // Paint_DrawStringAt(&paint, 30, 30, "1.Zapal diode ", &Font16, COLORED);
-
-
-
-//  /* Draw something to the frame buffer */
-//  Paint_DrawRectangle(&paint, 10, 60, 50, 110, COLORED);
-//  Paint_DrawLine(&paint, 10, 60, 50, 110, COLORED);
-//  Paint_DrawLine(&paint, 50, 60, 10, 110, COLORED);
-//  Paint_DrawCircle(&paint, 120, 80, 30, COLORED);
-//  Paint_DrawFilledRectangle(&paint, 10, 130, 50, 180, COLORED);
-//  Paint_DrawFilledCircle(&paint, 120, 150, 30, COLORED);
-//
-//  /* Display the frame_buffer */
-//  EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
-//  EPD_DisplayFrame(&epd);
-// // EPD_DelayMs(&epd, 20000);
-//  EPD_DelayMs(&epd, 200);
 
   EPD_Init(&epd, lut_partial_update);
   /**
@@ -161,7 +138,6 @@ int main(void)
 
   //wyswietlanie ekranu startowego
   EPD_SetFrameMemory(&epd, START_IMAGE, 0, 0, epd.width, epd.height);
-
   EPD_DisplayFrame(&epd);
   EPD_SetFrameMemory(&epd, START_IMAGE, 0, 0, epd.width, epd.height);
   EPD_DisplayFrame(&epd);
@@ -175,17 +151,15 @@ int main(void)
   Paint_DrawStringAt(&paint, 20, 30, "Wybierz przycisk ", &Font16, COLORED);
 
 
-Paint_DrawCircle(&paint, 50, 80, 30, COLORED);
-
-Paint_DrawCircle(&paint, 150, 80, 30, COLORED);
-			 Paint_DrawCircle(&paint, 50, 150, 30, COLORED);
-			  Paint_DrawCircle(&paint, 150, 150, 30, COLORED);
+  Paint_DrawCircle(&paint, 50, 80, 30, COLORED);
+  Paint_DrawCircle(&paint, 150, 80, 30, COLORED);
+  Paint_DrawCircle(&paint, 50, 150, 30, COLORED);
+  Paint_DrawCircle(&paint, 150, 150, 30, COLORED);
 
   //wyswietlanie ekranu glownego
   /* Display the frame_buffer */
   EPD_SetFrameMemory(&epd, frame_buffer, 0, 0, Paint_GetWidth(&paint), Paint_GetHeight(&paint));
   EPD_DisplayFrame(&epd);
-
   EPD_DelayMs(&epd, 200);
 
 
@@ -204,69 +178,67 @@ Paint_DrawCircle(&paint, 150, 80, 30, COLORED);
 
   while (1)
   {
-//PB4 PB5 PB7 PB8 input
   /* USER CODE END WHILE */
 //
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)&&(dev1==0)){
-		 //wlaczanie urzadzenia 1
-		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
-		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_SET);
-		 dev1=1;
-		 DisplayString(&paint,11,"Device 1 ON",&epd,frame_buffer);
+		//wlaczanie urzadzenia 1
+		//HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
+		HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_SET);
+		dev1=1;
+		DisplayString(&paint,"Device 1 ON",&epd,frame_buffer);
+	 	 }
 
-	 }
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4)&&(dev1==1)){
 		 //wylaczanie urzadzenia 1
-	 		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_RESET);
-	 		 dev1=0;
-	 		 DisplayString(&paint,10,"Device 1 OFF",&epd,frame_buffer);
-
+		 HAL_GPIO_WritePin(LD3_GPIO_Port,LD3_Pin,GPIO_PIN_RESET);
+		 dev1=0;
+		 DisplayString(&paint,"Device 1 OFF",&epd,frame_buffer);
 	 	 }
+
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)&&(dev2==0)){
 		 //wlaczanie urzadzenia 2
-	 	 		 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_SET);
-	 	 		 dev2=1;
-	 	 		 DisplayString(&paint,21,"Device 2 ON",&epd,frame_buffer);
+	 	 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_SET);
+	 	 dev2=1;
+	 	 DisplayString(&paint,"Device 2 ON",&epd,frame_buffer);
+	 	 }
 
-	 	 	 }
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)&&(dev2==1)){
 		 //wylaczanie urzadzenia 2
-	 	 		 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_RESET);
-	 	 		 dev2=0;
-	 	 		 DisplayString(&paint,20,"Device 2 OFF",&epd,frame_buffer);
+	 	 HAL_GPIO_WritePin(LD4_GPIO_Port,LD4_Pin,GPIO_PIN_RESET);
+	 	 dev2=0;
+	 	 DisplayString(&paint,"Device 2 OFF",&epd,frame_buffer);
+	 	 }
 
-	 	 	 }
 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)&&(dev3==0)){
 		 //wlaczanie urzadzenia 3
-	 	 	 		 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_SET);
-	 	 	 		 dev3=1;
-	 	 	 		 DisplayString(&paint,31,"Device 3 ON",&epd,frame_buffer);
+	 	 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_SET);
+	 	 dev3=1;
+	 	 DisplayString(&paint,"Device 3 ON",&epd,frame_buffer);
+	 	 }
 
-	 	 	 	 }
-	 	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)&&(dev3==1)){
-	 		 //wylaczanie urzadzenia 3
-	 	 	 		 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_RESET);
-	 	 	 		 dev3=0;
-	 	 	 		 DisplayString(&paint,30,"Device 3 OFF",&epd,frame_buffer);
-	 	 	 	 }
-	 	if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==0)){
-	 		 //wlaczanie urzadzenia 4
-	 		 	 		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
-	 		 	 		 HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_SET);
-	 		 	 		 dev4=1;
-	 		 	 		 DisplayString(&paint,41,"Device 4 ON",&epd,frame_buffer);
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)&&(dev3==1)){
+	 	//wylaczanie urzadzenia 3
+	 	 HAL_GPIO_WritePin(LD5_GPIO_Port,LD5_Pin,GPIO_PIN_RESET);
+	 	 dev3=0;
+	 	 DisplayString(&paint,"Device 3 OFF",&epd,frame_buffer);
+	 	 }
 
-	 		 	 	 }
-	 		 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==1)){
-	 			 //wylaczanie urzadzenia 4
-	 		 	 		 //HAL_GPIO_TogglePin(LD3_GPIO_Port,GPIO_PIN_13);
-	 		 	 		 HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_RESET);
-	 		 	 		 dev4=0;
-	 		 	 		 DisplayString(&paint,40,"Device 4 OFF",&epd,frame_buffer);
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==0)){
+	 	//wlaczanie urzadzenia 4
+	 	HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_SET);
+	 	dev4=1;
+	 	DisplayString(&paint,"Device 4 ON",&epd,frame_buffer);
+	 	 }
 
-	 		 	 	 }
+	 if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8)&&(dev4==1)){
+	 	//wylaczanie urzadzenia 4
+	 	HAL_GPIO_WritePin(LD6_GPIO_Port,LD6_Pin,GPIO_PIN_RESET);
+	 	dev4=0;
+	 	DisplayString(&paint,"Device 4 OFF",&epd,frame_buffer);
+	 	 }
 
   /* USER CODE BEGIN 3 */
+	 		 //wyswietlanie czasu
 //	  time_now_s = (HAL_GetTick() - time_start_ms) / 1000;
 //	     time_string[0] = time_now_s / 60 / 10 + '0';
 //	     time_string[1] = time_now_s / 60 % 10 + '0';
@@ -295,58 +267,27 @@ Paint_DrawCircle(&paint, 150, 80, 30, COLORED);
   * @brief System Clock Configuration
   * @retval None
   */
-void DisplayString(Paint* paint,int nr,const char* text,EPD* epd, const unsigned char* image_buffer){
+void DisplayString(Paint* paint,const char* text,EPD* epd, const unsigned char* image_buffer){
+
 	Paint_Clear(paint, UNCOLORED);
-			 Paint_DrawFilledRectangle(paint, 0, 6, 200, 26, COLORED);
-			  Paint_DrawStringAt(paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
-			 Paint_DrawStringAt(paint, 30, 30, text, &Font16, COLORED);
-			 /* Draw something to the frame buffer */
-			 // Paint_DrawRectangle(paint, 10, 60, 50, 110, COLORED);
-			// Paint_DrawRectangle(paint, 10, 60, 50, 110, COLORED);
-			 // Paint_DrawLine(paint, 10, 60, 50, 110, COLORED);
-			 // Paint_DrawLine(paint, 50, 60, 10, 110, COLORED);
-//			switch(nr){
-//			case 11:  Paint_DrawFilledCircle(paint, 50, 80, 30, COLORED);
-//			break;
-//			case 10:
-//				break;
-//			case 21:
-//				break;
-//			case 20:
-//				break;
-//			case 31:
-//				break;
-//			case 30:
-//				break;
-//			case 41:
-//				break;
-//			case 40:
-//			break;
-//
-//
-//			}
-
-			 if(dev1==0)  Paint_DrawCircle(paint, 50, 80, 30, COLORED);
-			 else Paint_DrawFilledCircle(paint, 50, 80, 30, COLORED);
-			 if(dev2==0)  Paint_DrawCircle(paint, 150, 80, 30, COLORED);
-			else Paint_DrawFilledCircle(paint, 150, 80, 30, COLORED);
-			 if(dev3==0)  Paint_DrawCircle(paint, 50, 150, 30, COLORED);
-			 else Paint_DrawFilledCircle(paint, 50, 150, 30, COLORED);
-			 if(dev4==0) Paint_DrawCircle(paint, 150, 150, 30, COLORED);
-			 else Paint_DrawFilledCircle(paint, 150, 150, 30, COLORED);
+	Paint_DrawFilledRectangle(paint, 0, 6, 200, 26, COLORED);
+	Paint_DrawStringAt(paint, 28, 10, "InteliHouse", &Font16, UNCOLORED);
+	Paint_DrawStringAt(paint, 30, 30, text, &Font16, COLORED);
 
 
+	if(dev1==0)  Paint_DrawCircle(paint, 50, 80, 30, COLORED);
+	else Paint_DrawFilledCircle(paint, 50, 80, 30, COLORED);
+	if(dev2==0)  Paint_DrawCircle(paint, 150, 80, 30, COLORED);
+	else Paint_DrawFilledCircle(paint, 150, 80, 30, COLORED);
+	if(dev3==0)  Paint_DrawCircle(paint, 50, 150, 30, COLORED);
+	else Paint_DrawFilledCircle(paint, 50, 150, 30, COLORED);
+	if(dev4==0) Paint_DrawCircle(paint, 150, 150, 30, COLORED);
+	else Paint_DrawFilledCircle(paint, 150, 150, 30, COLORED);
 
-
-
-			 // Paint_DrawFilledRectangle(paint, 10, 130, 50, 180, COLORED);
-			 // Paint_DrawFilledCircle(paint, 120, 150, 30, COLORED);
-
-			  //wyswietlanie ekranu glownego
-			  /* Display the frame_buffer */
-			  EPD_SetFrameMemory(epd, image_buffer, 0, 0, Paint_GetWidth(paint), Paint_GetHeight(paint));
-			  EPD_DisplayFrame(epd);
-			  EPD_DelayMs(epd, 500);
+	/* Display the frame_buffer */
+	EPD_SetFrameMemory(epd, image_buffer, 0, 0, Paint_GetWidth(paint), Paint_GetHeight(paint));
+	EPD_DisplayFrame(epd);
+	EPD_DelayMs(epd, 500);
 
 }
 void SystemClock_Config(void)
