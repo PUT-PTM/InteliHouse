@@ -13,3 +13,8 @@ CS   -> PE10
 CLK  -> PB13
 
 DIN  -> PB15
+
+K0 -> PB4
+K1 -> PB5
+K2 -> PB7
+K3 -> PB8
